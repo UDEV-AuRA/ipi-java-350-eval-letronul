@@ -1,1 +1,10 @@
 language: java
+
+addons:
+  sonarcloud:
+    organization: "letronul-github"
+
+mvn sonar:sonar \
+  -Dsonar.organization=letronul-github \
+  -Dsonar.host.url=https://sonarcloud.io \
+  -Dsonar.login=90f1c5b52bef9299ab72800f00083bbd42da6e63
