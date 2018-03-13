@@ -73,7 +73,6 @@ public class ManagerParameterizedAgmenterSalaireTest {
 		Double salaire = manager.getSalaire();
 		
 		//THEN
-		//System.out.println(salaire);
 		Assertions.assertThat(salaire).isEqualTo(expectedSalaireManager);
 	}
 	
@@ -86,7 +85,6 @@ public class ManagerParameterizedAgmenterSalaireTest {
 		manager.setEquipe(generateFullTeam(equipePleine));
 		
 		//WHEN
-		//manager.setSalaire(SalaireManager);
 		manager.augmenterSalaire(Coeff);
 		
 		
@@ -97,9 +95,7 @@ public class ManagerParameterizedAgmenterSalaireTest {
 			System.out.println(i.getNom() +" : " + i.getSalaire());
 		}
 		
-		System.out.println("totalt : " + salaireTechicien);
-		System.out.println("");
-		
+
 		//THEN
 		Assertions.assertThat(salaireTechicien).isEqualTo(expectedTotalSalaireTechicien);
 	}

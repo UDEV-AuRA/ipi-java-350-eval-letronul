@@ -25,27 +25,31 @@ public class EmployeRepositoryTest {
 	
 	@Before
 	public void setup(){
+		//GIVEN
 		employeRepository.deleteAll();
 		
 		pierreDurand = new Commercial();
 		pierreDurand.setPrenom("Pierre");
 		pierreDurand.setNom("Durand");
+		pierreDurand.setMatricule("A12345");
 		pierreDurand = employeRepository.save(pierreDurand);	
 		
 		rachidDurand = new Commercial();
 		rachidDurand.setPrenom("Rachid");
 		rachidDurand.setNom("Durand");
+		rachidDurand.setMatricule("B12345");
 		rachidDurand = employeRepository.save(rachidDurand);	
 		
 		manuelPierre = new Commercial();
 		manuelPierre.setPrenom("Manuel");
 		manuelPierre.setNom("Pierre");
+		manuelPierre.setMatricule("C12345");
 		manuelPierre = employeRepository.save(manuelPierre);	
 	}
 	
 	@Test
 	public void test_FindNomOrPrenomAllIgnoreCase_DoubleOccurence(){
-		//GIVEN
+		//..given
 
 		
 		//WHEN
@@ -60,7 +64,7 @@ public class EmployeRepositoryTest {
 	
 	@Test
 	public void test_FindNomOrPrenomAllIgnoreCase_nomAndPrenom(){
-		//GIVEN
+		//..given
 
 		
 		//WHEN
@@ -75,7 +79,7 @@ public class EmployeRepositoryTest {
 	
 	@Test
 	public void test_FindNomOrPrenomAllIgnoreCase_nomNonRepertorier(){
-		//GIVEN
+		//..given
 
 		
 		//WHEN
@@ -85,5 +89,77 @@ public class EmployeRepositoryTest {
 		Assertions.assertThat(employeList).isEmpty();
 		
 		
+	}
+	
+	@Test
+	public void test_findEmployePlusRiches_casNominal(){
+		//..given
+		Employe employeA = employeRepository.findByMatricule("A12345");
+		employeA.setSalaire(1000d);
+		employeRepository.save(employeA);
+		
+		Employe employeB = employeRepository.findByMatricule("B12345");
+		employeB.setSalaire(2000d);
+		employeRepository.save(employeB);
+		
+		Employe employeC = employeRepository.findByMatricule("C12345");
+		employeC.setSalaire(3000d);
+		employeRepository.save(employeC);
+		
+		//WHEN
+		
+		List<Employe> employeListRiche = employeRepository.findEmployePlusRiches();
+		
+		
+		//THEN
+		Assertions.assertThat(employeListRiche).isNotEmpty();
+		Assertions.assertThat(employeListRiche.size()).isEqualTo(1);
+		Assertions.assertThat(employeListRiche).contains(employeC);
+		Assertions.assertThat(employeListRiche.get(0).getSalaire()).isEqualTo(3000d);
+		
+	}
+	
+	
+	@Test
+	public void test_findEmployePlusRiches_2PlusRiches(){
+		//..given
+		Employe employeA = employeRepository.findByMatricule("A12345");
+		employeA.setSalaire(1000d);
+		employeRepository.save(employeA);
+		
+		Employe employeB = employeRepository.findByMatricule("B12345");
+		employeB.setSalaire(3000d);
+		employeRepository.save(employeB);
+		
+		Employe employeC = employeRepository.findByMatricule("C12345");
+		employeC.setSalaire(3000d);
+		employeRepository.save(employeC);
+		
+		//WHEN
+		
+		List<Employe> employeListRiche = employeRepository.findEmployePlusRiches();
+		
+		
+		//THEN
+		Assertions.assertThat(employeListRiche).isNotEmpty();
+		Assertions.assertThat(employeListRiche.size()).isEqualTo(2);
+		Assertions.assertThat(employeListRiche).contains(employeC,employeB);
+		Assertions.assertThat(employeListRiche.get(0).getSalaire()).isEqualTo(3000d);
+		Assertions.assertThat(employeListRiche.get(1).getSalaire()).isEqualTo(3000d);
+	}
+	
+	
+	@Test
+	public void test_findEmployePlusRiches_emptyRepository(){
+		//..given
+		employeRepository.deleteAll();
+		
+		//WHEN
+		
+		List<Employe> employeListRiche = employeRepository.findEmployePlusRiches();
+		
+		
+		//THEN
+		Assertions.assertThat(employeListRiche).isEmpty();
 	}
 }
