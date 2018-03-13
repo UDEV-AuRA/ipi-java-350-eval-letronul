@@ -61,7 +61,7 @@ public abstract class Employe implements Serializable {
 
 	public void augmenterSalaire(Double pourcentage) {
 		this.salaire = this.getSalaire() * (1 + pourcentage);
-		this.salaire = (double) (Math.round(this.salaire * 100d) / 100);
+		this.salaire = (double) (Math.round(this.salaire * 100d) / 100d);
 	}
 
 	public Long getId() {

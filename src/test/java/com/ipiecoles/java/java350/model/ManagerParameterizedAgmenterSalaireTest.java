@@ -50,10 +50,10 @@ public class ManagerParameterizedAgmenterSalaireTest {
 	public static Collection<Object[]> data() {
 		//GIVEN
 	    return Arrays.asList(new Object[][]{
-	           { 1000d, 0d, true, 1800d, 7480d},
-	           { 2000d, 0.1d, true, 3960d, 8228d},
-	           { 2000d, 0.2d, true, 4320d, 8976d},
-	           { 4000d, 0.1d, true, 7920d, 8228.0},
+	           { 1000d, 0d, true, 1800d, 7480.27d},
+	           { 2000d, 0.1d, true, 3960d, 8228.3d},
+	           { 2000d, 0.2d, true, 4320d, 8976.32d},
+	           { 4000d, 0.1d, true, 7920d, 8228.3},
 	           { 5000d, 0.1d, false, 7150d, 0d}
 	    	}
 	        );
