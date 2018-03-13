@@ -16,7 +16,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class ManagerParameterizedAugmenterSalaireTest {
 	
 	@Parameter(value = 0)
-	public Double salaireBase;
+	public Double salaireBaseManager;
 	
 	@Parameter(value = 1)
 	public Set<Technicien> equipeTest = new HashSet<>();
@@ -30,37 +30,39 @@ public class ManagerParameterizedAugmenterSalaireTest {
 	@Parameter(value = 4)
 	public Double pourcentage;
 	
-	
+	public static Technicien tech1 = new Technicien("bidon", "d'eau", null, null, 1200.0, null);
+
 	@Parameters(name = "Salaire de base du Manager {0} / Augmentation de {4} /Resultat : Salaire final Manager {2} / Salaire final Technicien {3}")
 	public static Collection<Object[]> data() {
 		
 		//GIVEN
 		Set<Technicien> equipe = new HashSet<>();
-		equipe.add(new Technicien());
-		equipe.add(new Technicien("bidon", "d'huile", null, null, null, null));
-		equipe.add(new Technicien("bidon", "d'essence", null, null, null, null));
-		equipe.add(new Technicien("bidon", "de friture", null, null, null, null));
+		equipe.add(tech1);
+		equipe.add(new Technicien("bidon", "d'huile", null, null, 1000d, null));
+		equipe.add(new Technicien("bidon", "d'essence", null, null, 1000d, null));
+		equipe.add(new Technicien("bidon", "de friture", null, null, 1000d, null));
 		
 		
 		Set<Technicien> equipeEmpty = new HashSet<>();
 
 	    return Arrays.asList(new Object[][]{
-	           { 1000d, equipe,1700d},
-	           { 1000d, equipeEmpty,1300d}
+	           { 1000d, equipe,1100d,null,0.1},
+	           { 1000d, equipeEmpty,1200d,null,0.2}
 	    	}
 	        );
 	}
 	
 	@Test
 	public void testEquivalenceSalaire(){
-		Manager manager = new Manager();
+		Manager manager = new Manager("test","test", null, null, salaireBaseManager, null);
 		manager.setEquipe(equipeTest);
+				
+		manager.augmenterSalaire(pourcentage);
 		
-		//manager.setSalaire(salaire);
+		Double salaireManagerF = manager.getSalaire();		
 		
-		Double salaireD = manager.getSalaire();
-		
-		//Assertions.assertThat(salaireD).isEqualTo(salaireFinal);
+		Assertions.assertThat(salaireManagerF).isEqualTo(salaireFinalManager);
+		Assertions.assertThat(tech1.getSalaire()).isEqualTo(1320.0);
 	}
 
 }

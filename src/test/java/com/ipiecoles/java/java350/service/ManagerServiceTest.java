@@ -1,92 +1,99 @@
 package com.ipiecoles.java.java350.service;
 
-import java.util.HashSet;
-
-import javax.persistence.EntityNotFoundException;
-
-import org.assertj.core.api.Assertions;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-
+import com.ipiecoles.java.java350.model.Commercial;
+import com.ipiecoles.java.java350.model.Employe;
 import com.ipiecoles.java.java350.model.Manager;
 import com.ipiecoles.java.java350.model.Technicien;
 import com.ipiecoles.java.java350.repository.ManagerRepository;
 import com.ipiecoles.java.java350.repository.TechnicienRepository;
+import com.ipiecoles.java.java350.service.ManagerService;
+import org.assertj.core.api.Assertions;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
+import static org.mockito.AdditionalAnswers.returnsFirstArg;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
+import javax.persistence.EntityNotFoundException;
+
+@RunWith(MockitoJUnitRunner.class)
 public class ManagerServiceTest {
+    @InjectMocks
+    ManagerService managerService;
 
-	@Autowired
-	ManagerService managerService;
-	
-	@Autowired
-	ManagerRepository managerRepository;
-	
-	@Autowired
-	TechnicienRepository technicienRepository;
-	
-	@Before
-	public void setUp() {
-		technicienRepository.deleteAll();
-		managerRepository.deleteAll();
-	}
-	
-	@Test
-	public void testAddTechniciens() {
-		//Given
-		Manager manager = new Manager("Durand","Jean", "M12345",null,2000d,new HashSet<>());
-		manager = managerRepository.save(manager);
-		Manager manager2 = new Manager("Dupre","Jacques", "M12346",null,2000d,new HashSet<>());
-		manager2 = managerRepository.save(manager2);
+    @Mock
+    ManagerRepository managerRepository;
 
-		Technicien technicien = new Technicien("Dupond","Jacques", "T98765", null, 1000d, 2);
-		technicien = technicienRepository.save(technicien);
-		Technicien technicien2 = new Technicien("Dupre","Jean", "T98764", null, 1000d, 2);
-		technicien2 = technicienRepository.save(technicien2);
+    @Mock
+    TechnicienRepository technicienRepository;
 
-		//When
-		managerService.addTechniciens(manager.getId(), technicien.getMatricule());
-		//managerService.addTechniciens(manager2.getId(), technicien2.getMatricule());
+    @Test
+    public void testDeleteTechniciens(){
+        //Given
+        Manager m = new Manager();
+        Technicien t = new Technicien();
+        m.getEquipe().add(t);
+        Mockito.when(managerRepository.findOne(1L)).thenReturn(m);
+        Mockito.when(technicienRepository.findOne(2L)).thenReturn(t);
 
-		
-		//Then
-		Manager finalManager = managerRepository.findOneWithEquipeById(manager.getId());
-		
-		Technicien finalTechnicien = technicienRepository.findOne(technicien.getId());
-		
-		Manager finalManager2 = managerRepository.findOneWithEquipeById(manager2.getId());
-		
-		Technicien finalTechnicien2 = technicienRepository.findOne(technicien2.getId());
-		
-		Assertions.assertThat(finalManager.getEquipe().contains(finalTechnicien));
-		Assertions.assertThat(finalTechnicien.getManager()).isNotNull();
-		Assertions.assertThat(finalTechnicien.getManager()).isEqualTo(finalManager);
-		Assertions.assertThat(finalTechnicien2.getManager()).isNull();
-		Assertions.assertThat(finalManager2.getEquipe()).isEmpty();
-	}
+        //When
+        managerService.deleteTechniciens(1L,2L);
+        //Then
+        ArgumentCaptor<Manager> argManager = ArgumentCaptor.forClass(Manager.class);
+        Mockito.verify(managerRepository).save(argManager.capture());
+        Assertions.assertThat(argManager.getValue().getEquipe()).isEmpty();
 
-	@Test
-	public void testAddTechnicienWithNoManager() {
-		//Given
-		Technicien technicien2 = new Technicien("Dupre","Jean", "T98764", null, 1000d, 2);
-		technicien2 = technicienRepository.save(technicien2);
-		
-		//When
-		try {
-			managerService.addTechniciens(null, technicien2.getMatricule());
-			Assertions.fail("Cela aurait du planter");
-		}
-		catch(Exception e){
-			//Then
-			Assertions.assertThat(e).isInstanceOf(EntityNotFoundException.class);
-			Assertions.assertThat(e).hasMessage("Impossible de trouver le manager d'identifiant null");
-			//Assertions.assertThat(e.getMessage()).isEqualToIgnoringWhitespace(expected)("Impossible de trouver le manager d'identifiant null");
-		}
-	}
+        ArgumentCaptor<Technicien> argTechnicien = ArgumentCaptor.forClass(Technicien.class);
+        Mockito.verify(technicienRepository).save(argTechnicien.capture());
+        Assertions.assertThat(argTechnicien.getValue().getManager()).isNull();
+    }
 
+    @Test
+    public void testAddTechnicienOK(){
+        //Given
+        Manager m = new Manager();
+        Technicien t = new Technicien();
+        Mockito.when(managerRepository.findOneWithEquipeById(1L)).thenReturn(m);
+        Mockito.when(managerRepository.save(Mockito.any(Manager.class))).then(returnsFirstArg());
+        Mockito.when(technicienRepository.findByMatricule("2L")).thenReturn(t);
+
+        //When
+        managerService.addTechniciens(1L,"2L");
+        
+        //Then
+        ArgumentCaptor<Manager> argManager = ArgumentCaptor.forClass(Manager.class);
+        Mockito.verify(managerRepository).save(argManager.capture());
+        Assertions.assertThat(argManager.getValue().getEquipe().contains(t));
+
+        ArgumentCaptor<Technicien> argTechnicien = ArgumentCaptor.forClass(Technicien.class);
+        Mockito.verify(technicienRepository).save(argTechnicien.capture());
+        Assertions.assertThat(argTechnicien.getValue().getManager()).isNotNull();
+        Assertions.assertThat(argTechnicien.getValue().getManager()).isEqualTo(m);
+    }
+
+    @Test
+    public void testAddTechnicienKO(){
+        //Given
+        Manager m = new Manager();
+        Technicien t = new Technicien();
+		Mockito.when(managerRepository.findByMatricule("C12345")).thenReturn(null);
+
+        //When
+        managerService.addTechniciens(1L,"2L");
+        
+        //Then
+        ArgumentCaptor<Manager> argManager = ArgumentCaptor.forClass(Manager.class);
+        Mockito.verify(managerRepository).save(argManager.capture());
+        Assertions.assertThat(argManager.getValue().getEquipe().contains(t));
+
+        ArgumentCaptor<Technicien> argTechnicien = ArgumentCaptor.forClass(Technicien.class);
+        Mockito.verify(technicienRepository).save(argTechnicien.capture());
+        Assertions.assertThat(argTechnicien.getValue().getManager()).isNotNull();
+        Assertions.assertThat(argTechnicien.getValue().getManager()).isEqualTo(m);
+        
+    }
 }

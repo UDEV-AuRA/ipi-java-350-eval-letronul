@@ -30,16 +30,19 @@ public class EmployeRepositoryTest {
 		pierreDurand = new Commercial();
 		pierreDurand.setPrenom("Pierre");
 		pierreDurand.setNom("Durand");
+		pierreDurand.setSalaire(1000d);
 		pierreDurand = employeRepository.save(pierreDurand);	
 		
 		rachidDurand = new Commercial();
 		rachidDurand.setPrenom("Rachid");
 		rachidDurand.setNom("Durand");
+		rachidDurand.setSalaire(10000d);
 		rachidDurand = employeRepository.save(rachidDurand);	
 		
 		manuelPierre = new Commercial();
 		manuelPierre.setPrenom("Manuel");
 		manuelPierre.setNom("Pierre");
+		manuelPierre.setSalaire(2000d);
 		manuelPierre = employeRepository.save(manuelPierre);	
 	}
 	
@@ -83,6 +86,54 @@ public class EmployeRepositoryTest {
 	
 		//THEN
 		Assertions.assertThat(employeList).isEmpty();
+		
+		
+	}
+	
+	@Test
+	public void testFindLePlusRicheRachid(){
+		//GIVEN
+		
+		//WHEN
+		List<Employe> employeList = employeRepository.findEmployePlusRiches();
+	
+		//THEN
+		Assertions.assertThat(employeList).isNotEmpty();
+		Assertions.assertThat(employeList).contains(rachidDurand);
+		
+		
+	}
+	
+	@Test
+	public void testFindLePlusRicheTousEgaux(){
+		//GIVEN
+		pierreDurand.setSalaire(10000d);
+		manuelPierre.setSalaire(10000d);
+		
+		//WHEN
+		List<Employe> employeList = employeRepository.findEmployePlusRiches();
+	
+		//THEN
+		Assertions.assertThat(employeList).isEmpty();
+		Assertions.assertThat(employeList).doesNotContain(rachidDurand,pierreDurand,manuelPierre);
+		
+		
+	}
+	
+	@Test
+	public void testFindLePlusRichePlusieursRiches(){
+		//GIVEN
+		pierreDurand.setSalaire(10000d);
+		manuelPierre.setSalaire(2000d);
+		
+		//WHEN
+		List<Employe> employeList = employeRepository.findEmployePlusRiches();
+	
+		//THEN
+		Assertions.assertThat(employeList).isNotEmpty();
+		Assertions.assertThat(employeList).contains(rachidDurand,pierreDurand);
+		Assertions.assertThat(employeList).doesNotContain(manuelPierre);
+
 		
 		
 	}
