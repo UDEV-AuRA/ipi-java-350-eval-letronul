@@ -2,6 +2,6 @@ language: java
 
 addons:
   sonarcloud:
-    organization: "letronul-github"
+    organization: "dorianmayor-github"
 
-script: mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.organization=letronul-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=90f1c5b52bef9299ab72800f00083bbd42da6e63 -Dsonar.projectKey=java350:master -Dsonar.branch=master
+script: mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.organization=dorianmayor-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=bcda84c31fc9a293ca73a641b34d6ce41d9911aa -Dsonar.projectKey=java350:master -Dsonar.branch=master
