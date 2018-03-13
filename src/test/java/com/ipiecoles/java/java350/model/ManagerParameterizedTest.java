@@ -13,7 +13,7 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
-public class ManagetParameterizedTest {
+public class ManagerParameterizedTest {
 
 	@Parameter(value = 0)
 	public Double salaireTest;
