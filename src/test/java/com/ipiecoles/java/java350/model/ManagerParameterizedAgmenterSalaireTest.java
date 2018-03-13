@@ -14,14 +14,14 @@ import org.junit.runners.Parameterized.Parameters;
 
 
 /*
- * METHODE NON CONFORME
+ * METHODE NON CONFORME 13/03/2013
  * 
  * le logiciel génère des décimaux parasite 
  * lors du lancement de la fonction aumgenterSalaire()
  * 
  * Ex : 3960.0000000000005
  * 
- * TODO : Maintenance corrective
+ * Maintenance corrective apporté le 13/03/2013
  * 	- Définir un degré d'arrondissement dans la fonction 
  * 	  pour eviter la génération de ces décimaux
  * 
@@ -37,7 +37,7 @@ public class ManagerParameterizedAgmenterSalaireTest {
 	public Double Coeff;
 	
 	@Parameter(value = 2)
-	public Set<Technicien> equipeTest;
+	public boolean equipePleine;
 	
 	@Parameter(value = 3)
 	public Double expectedSalaireManager;
@@ -46,27 +46,15 @@ public class ManagerParameterizedAgmenterSalaireTest {
 	public Double expectedTotalSalaireTechicien;
 	
 	
-	@Parameters (name = "coeff {0} / technicient {1} / expectedSalaire {2}!")
+	@Parameters (name = "coeff {0} / technicient {1} / avec une equipe ? {2}! / salaire Manager {3} / salaireTotalTechniciens {4}")
 	public static Collection<Object[]> data() {
-		
 		//GIVEN
-		Set<Technicien> equipeFull = new HashSet<>();
-		equipeFull.add(new Technicien("1", null, null, null, 1000d, null));
-		equipeFull.add(new Technicien("2", null, null, null, 2000d, null));
-		equipeFull.add(new Technicien("3", null, null, null, 3000d, null));
-		equipeFull.add(new Technicien("4", null, null, null, 0d, null));
-		equipeFull.add(new Technicien());
-		
-		
-		Set<Technicien> equipeEmpty = new HashSet<>();
-		
-		
 	    return Arrays.asList(new Object[][]{
-	           { 1000d, 0d, equipeFull, 1800d, 7480.27d},
-	           { 2000d, 0.1d, equipeFull, 3960d, 0d},
-	           { 2000d, 0.2d, equipeFull, 4320d, 0d},
-	           { 4000d, 0.1d, equipeFull, 7920d, 0d},
-	           { 5000d, 0.1d, equipeEmpty, 7150d, 0d}
+	           { 1000d, 0d, true, 1800d, 7480d},
+	           { 2000d, 0.1d, true, 3960d, 8228d},
+	           { 2000d, 0.2d, true, 4320d, 8976d},
+	           { 4000d, 0.1d, true, 7920d, 8228.0},
+	           { 5000d, 0.1d, false, 7150d, 0d}
 	    	}
 	        );
 	}
@@ -76,7 +64,7 @@ public class ManagerParameterizedAgmenterSalaireTest {
 	public void test_ManagerSalaire(){
 		//....given
 		Manager manager = new Manager();
-		manager.setEquipe(equipeTest);
+		manager.setEquipe(generateFullTeam(equipePleine));
 		
 		//WHEN
 		manager.setSalaire(SalaireManager);
@@ -85,7 +73,7 @@ public class ManagerParameterizedAgmenterSalaireTest {
 		Double salaire = manager.getSalaire();
 		
 		//THEN
-		System.out.println(salaire);
+		//System.out.println(salaire);
 		Assertions.assertThat(salaire).isEqualTo(expectedSalaireManager);
 	}
 	
@@ -95,9 +83,10 @@ public class ManagerParameterizedAgmenterSalaireTest {
 	public void test_TechnicienSalaire(){
 		//....given
 		Manager manager = new Manager();
-		manager.setEquipe(equipeTest);
+		manager.setEquipe(generateFullTeam(equipePleine));
 		
 		//WHEN
+		//manager.setSalaire(SalaireManager);
 		manager.augmenterSalaire(Coeff);
 		
 		
@@ -113,5 +102,24 @@ public class ManagerParameterizedAgmenterSalaireTest {
 		
 		//THEN
 		Assertions.assertThat(salaireTechicien).isEqualTo(expectedTotalSalaireTechicien);
+	}
+	
+	
+	/*
+	 * FONCTIONS UTILITAIRES
+	 */
+	private static Set<Technicien> generateFullTeam(boolean equipePleine){
+		
+		Set<Technicien> equipeFull = new HashSet<>();
+		
+		if(equipePleine){
+			equipeFull.add(new Technicien("1", null, null, null, 1000d, null));
+			equipeFull.add(new Technicien("2", null, null, null, 2000d, null));
+			equipeFull.add(new Technicien("3", null, null, null, 3000d, null));
+			equipeFull.add(new Technicien("4", null, null, null, 0d, null));
+			equipeFull.add(new Technicien());
+		}
+		
+		return equipeFull;
 	}
 }
