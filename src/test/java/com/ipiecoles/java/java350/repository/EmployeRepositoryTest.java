@@ -18,6 +18,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 @DataJpaTest
 public class EmployeRepositoryTest {
 	
+	//Exercice sur la méthode FindEmployePlusRiche
+	
 	@Autowired
 	private EmployeRepository employeRepository;
 	

@@ -15,13 +15,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 
-import javax.persistence.EntityNotFoundException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ManagerServiceTest {
+	
+	//Exercice sur la méthode AddTechnicien
+
     @InjectMocks
     ManagerService managerService;
 
@@ -75,25 +76,4 @@ public class ManagerServiceTest {
         Assertions.assertThat(argTechnicien.getValue().getManager()).isEqualTo(m);
     }
 
-    @Test
-    public void testAddTechnicienKO(){
-        //Given
-        Manager m = new Manager();
-        Technicien t = new Technicien();
-		Mockito.when(managerRepository.findByMatricule("C12345")).thenReturn(null);
-
-        //When
-        managerService.addTechniciens(1L,"2L");
-        
-        //Then
-        ArgumentCaptor<Manager> argManager = ArgumentCaptor.forClass(Manager.class);
-        Mockito.verify(managerRepository).save(argManager.capture());
-        Assertions.assertThat(argManager.getValue().getEquipe().contains(t));
-
-        ArgumentCaptor<Technicien> argTechnicien = ArgumentCaptor.forClass(Technicien.class);
-        Mockito.verify(technicienRepository).save(argTechnicien.capture());
-        Assertions.assertThat(argTechnicien.getValue().getManager()).isNotNull();
-        Assertions.assertThat(argTechnicien.getValue().getManager()).isEqualTo(m);
-        
-    }
 }

@@ -15,6 +15,8 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class ManagerParameterizedAugmenterSalaireTest {
 	
+	//Exercice sur la méthode AugmenterSalaire
+	
 	@Parameter(value = 0)
 	public Double salaireBaseManager;
 	

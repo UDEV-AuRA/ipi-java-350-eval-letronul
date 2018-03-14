@@ -15,6 +15,8 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class ManagerParameterizedTest {
 
+	//Exercice sur la méthode SetSalaire
+	
 	@Parameter(value = 0)
 	public Double salaire;
 	
